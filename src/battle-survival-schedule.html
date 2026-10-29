@@ -1,0 +1,265 @@
+<div class="bs-wrap">
+  <table class="bs-schedule">
+    <thead>
+      <tr>
+        <th id="bs-th-day"></th>
+        <th id="bs-th-counter"></th>
+        <th id="bs-th-detail"></th>
+        <th id="bs-th-event"></th>
+        <th id="bs-th-act1"></th>
+        <th id="bs-th-act2"></th>
+      </tr>
+    </thead>
+    <tbody id="bs-body"></tbody>
+  </table>
+</div>
+<div id="bs-tzinfo"></div>
+<script>
+(function () {
+  "use strict";
+
+  var CSS = ""
+    + ".bs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }"
+    + ".bs-schedule { border-collapse: collapse; background: #fff; color: #888; font: 13px/1.45 Roboto, Arial, Helvetica, sans-serif; }"
+    + ".bs-schedule th { padding: 3px 10px; text-align: left; font-size: 11px; font-weight: 700; color: #fff; background: #26b; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid #eee; white-space: nowrap; }"
+    + ".bs-schedule td { padding: 3px 10px; border-bottom: 1px solid #eee; vertical-align: top; }"
+    + ".bs-schedule tbody tr:last-child td { border-bottom: none; }"
+    + ".bs-day, .bs-event, .bs-counter, .bs-detail { white-space: nowrap; }"
+    + ".bs-counter { font-variant-numeric: tabular-nums; text-align: right; }"
+    + "#bs-th-counter { text-align: right; }"
+    + ".bs-event { font-weight: 700; }"
+    + "tr.bs-past td { color: #b3b3b3; }"
+    + "tr.bs-current td { background: #009922; color: #fff; font-weight: 700; }"
+    + "tr.bs-current td.bs-day::after { content: \" \u2605\"; color: #d8d8d8; margin-right: 4px; }"
+    + "#bs-tzinfo { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; text-align: right; padding: 4px 10px 0 10px; }";
+
+  var styleEl = document.createElement("style");
+  styleEl.type = "text/css";
+  if (styleEl.styleSheet) {
+    styleEl.styleSheet.cssText = CSS;
+  } else {
+    styleEl.appendChild(document.createTextNode(CSS));
+  }
+  (document.head || document.getElementsByTagName("head")[0]).appendChild(styleEl);
+
+  var SRC_TO_UTC_MS = 2 * 3600 * 1000;
+
+  var I18N = {
+    es: { title: "Calendario Battle Survival",
+          headers: ["Día", "Counter", "Detalle", "Evento", "Actividad 1", "Actividad 2"],
+          days: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+          past: "Finalizada", current: "En curso", next: "Próxima" },
+    en: { title: "Battle Survival Schedule",
+          headers: ["Day", "Counter", "Detail", "Event", "Activity 1", "Activity 2"],
+          days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+          past: "Finished", current: "In progress", next: "Upcoming" },
+    pt: { title: "Agenda Battle Survival",
+          headers: ["Dia", "Contador", "Detalhe", "Evento", "Atividade 1", "Atividade 2"],
+          days: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+          past: "Finalizada", current: "Em andamento", next: "Próxima" },
+    it: { title: "Calendario Battle Survival",
+          headers: ["Giorno", "Contatore", "Dettaglio", "Evento", "Attività 1", "Attività 2"],
+          days: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
+          past: "Conclusa", current: "In corso", next: "Prossima" },
+    tr: { title: "Battle Survival Programı",
+          headers: ["Gün", "Sayaç", "Ayrıntı", "Etkinlik", "Aktivite 1", "Aktivite 2"],
+          days: ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"],
+          past: "Tamamlandı", current: "Devam ediyor", next: "Yaklaşan" },
+    zh: { title: "Battle Survival 日程",
+          headers: ["日期", "倒计时", "状态", "活动", "任务 1", "任务 2"],
+          days: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+          past: "已结束", current: "进行中", next: "即将开始" },
+    ja: { title: "Battle Survival スケジュール",
+          headers: ["日", "カウンター", "詳細", "イベント", "アクティビティ 1", "アクティビティ 2"],
+          days: ["日", "月", "火", "水", "木", "金", "土"],
+          past: "終了", current: "進行中", next: "次回" }
+  };
+  var FALLBACK_LANG = "es";
+
+  function resolveLang() {
+    var m = /[?&]lang=([a-zA-Z]{2})/.exec(window.location.search);
+    if (m && I18N[m[1].toLowerCase()]) return m[1].toLowerCase();
+    var base = ((navigator.language || navigator.userLanguage || "").toLowerCase().split("-"))[0];
+    return I18N[base] ? base : FALLBACK_LANG;
+  }
+
+  var LANG = resolveLang();
+  var T = I18N[LANG];
+  document.documentElement.lang = LANG;
+  document.title = T.title;
+
+  var ACTIVITIES = [
+    { "codebs": "BUILD",   "event": "Build Territory",     "activity_1": "1min Construction Speedup (50H) [+10]", "activity_2": "Increase 1 Building Might (30.000) [+1]", "goal": "30.000 pts" },
+    { "codebs": "HEROE",   "event": "Enhance Heroes",      "activity_1": "20 Ticket Heroes (30T) [+400]",         "activity_2": "1950 Antitoxin (23.4M) [+1]",             "goal": "12.000 pts" },
+    { "codebs": "RAVEN",   "event": "Enhance Raven",       "activity_1": "10 Raven Fruit",                        "activity_2": "1 Stamina (15 Rallys) [+100]",            "goal": "30.000 pts" },
+    { "codebs": "SOLDIER", "event": "Train Soldiers",      "activity_1": "1min Training Boost (17H) [+10]",       "activity_2": "Train 1 Lv.8 Soldier (2.800) [+25]",      "goal": "60.000 pts" },
+    { "codebs": "TECH",    "event": "Technology Research", "activity_1": "1min Research Speedup (50H) [+10]",     "activity_2": "Increase 1 Tech Might (30.000) [+1]",     "goal": "30.000 pts" }
+  ];
+
+  var CALENDAR = [
+    { "codet": "1.3",  "noday": 1, "time_init": "03:00:00", "day": "DOM", "codebs": "SOLDIER" },
+    { "codet": "1.7",  "noday": 1, "time_init": "07:00:00", "day": "DOM", "codebs": "TECH" },
+    { "codet": "1.11", "noday": 1, "time_init": "11:00:00", "day": "DOM", "codebs": "RAVEN" },
+    { "codet": "1.15", "noday": 1, "time_init": "15:00:00", "day": "DOM", "codebs": "HEROE" },
+    { "codet": "1.19", "noday": 1, "time_init": "19:00:00", "day": "DOM", "codebs": "BUILD" },
+    { "codet": "1.23", "noday": 1, "time_init": "23:00:00", "day": "DOM", "codebs": "HEROE" },
+    { "codet": "2.3",  "noday": 2, "time_init": "03:00:00", "day": "LUN", "codebs": "BUILD" },
+    { "codet": "2.7",  "noday": 2, "time_init": "07:00:00", "day": "LUN", "codebs": "SOLDIER" },
+    { "codet": "2.11", "noday": 2, "time_init": "11:00:00", "day": "LUN", "codebs": "TECH" },
+    { "codet": "2.15", "noday": 2, "time_init": "15:00:00", "day": "LUN", "codebs": "RAVEN" },
+    { "codet": "2.19", "noday": 2, "time_init": "19:00:00", "day": "LUN", "codebs": "HEROE" },
+    { "codet": "2.23", "noday": 2, "time_init": "23:00:00", "day": "LUN", "codebs": "BUILD" },
+    { "codet": "3.3",  "noday": 3, "time_init": "03:00:00", "day": "MAR", "codebs": "SOLDIER" },
+    { "codet": "3.7",  "noday": 3, "time_init": "07:00:00", "day": "MAR", "codebs": "TECH" },
+    { "codet": "3.11", "noday": 3, "time_init": "11:00:00", "day": "MAR", "codebs": "RAVEN" },
+    { "codet": "3.15", "noday": 3, "time_init": "15:00:00", "day": "MAR", "codebs": "HEROE" },
+    { "codet": "3.19", "noday": 3, "time_init": "19:00:00", "day": "MAR", "codebs": "BUILD" },
+    { "codet": "3.23", "noday": 3, "time_init": "23:00:00", "day": "MAR", "codebs": "SOLDIER" },
+    { "codet": "4.3",  "noday": 4, "time_init": "03:00:00", "day": "MIE", "codebs": "TECH" },
+    { "codet": "4.7",  "noday": 4, "time_init": "07:00:00", "day": "MIE", "codebs": "RAVEN" },
+    { "codet": "4.11", "noday": 4, "time_init": "11:00:00", "day": "MIE", "codebs": "HEROE" },
+    { "codet": "4.15", "noday": 4, "time_init": "15:00:00", "day": "MIE", "codebs": "BUILD" },
+    { "codet": "4.19", "noday": 4, "time_init": "19:00:00", "day": "MIE", "codebs": "SOLDIER" },
+    { "codet": "4.23", "noday": 4, "time_init": "23:00:00", "day": "MIE", "codebs": "TECH" },
+    { "codet": "5.3",  "noday": 5, "time_init": "03:00:00", "day": "JUE", "codebs": "RAVEN" },
+    { "codet": "5.7",  "noday": 5, "time_init": "07:00:00", "day": "JUE", "codebs": "HEROE" },
+    { "codet": "5.11", "noday": 5, "time_init": "11:00:00", "day": "JUE", "codebs": "BUILD" },
+    { "codet": "5.15", "noday": 5, "time_init": "15:00:00", "day": "JUE", "codebs": "SOLDIER" },
+    { "codet": "5.19", "noday": 5, "time_init": "19:00:00", "day": "JUE", "codebs": "TECH" },
+    { "codet": "5.23", "noday": 5, "time_init": "23:00:00", "day": "JUE", "codebs": "RAVEN" },
+    { "codet": "6.3",  "noday": 6, "time_init": "03:00:00", "day": "VIE", "codebs": "HEROE" },
+    { "codet": "6.7",  "noday": 6, "time_init": "07:00:00", "day": "VIE", "codebs": "BUILD" },
+    { "codet": "6.11", "noday": 6, "time_init": "11:00:00", "day": "VIE", "codebs": "SOLDIER" },
+    { "codet": "6.15", "noday": 6, "time_init": "15:00:00", "day": "VIE", "codebs": "TECH" },
+    { "codet": "6.19", "noday": 6, "time_init": "19:00:00", "day": "VIE", "codebs": "RAVEN" },
+    { "codet": "6.23", "noday": 6, "time_init": "23:00:00", "day": "VIE", "codebs": "HEROE" },
+    { "codet": "7.3",  "noday": 7, "time_init": "03:00:00", "day": "SAB", "codebs": "BUILD" },
+    { "codet": "7.7",  "noday": 7, "time_init": "07:00:00", "day": "SAB", "codebs": "SOLDIER" },
+    { "codet": "7.11", "noday": 7, "time_init": "11:00:00", "day": "SAB", "codebs": "TECH" },
+    { "codet": "7.15", "noday": 7, "time_init": "15:00:00", "day": "SAB", "codebs": "RAVEN" },
+    { "codet": "7.19", "noday": 7, "time_init": "19:00:00", "day": "SAB", "codebs": "HEROE" },
+    { "codet": "7.23", "noday": 7, "time_init": "23:00:00", "day": "SAB", "codebs": "BUILD" }
+  ];
+
+  var WEEK_SECONDS = 604800;
+
+  var actMap = {};
+  ACTIVITIES.forEach(function (a) { actMap[a.codebs] = a; });
+
+  var slots = CALENDAR.map(function (c) {
+    var p = c.time_init.split(":");
+    return {
+      sec: (c.noday - 1) * 86400 + (+p[0]) * 3600 + (+p[1]) * 60 + (+p[2]),
+      event: actMap[c.codebs].event,
+      act1: actMap[c.codebs].activity_1,
+      act2: actMap[c.codebs].activity_2
+    };
+  });
+  slots.sort(function (a, b) { return a.sec - b.sec; });
+
+  function nowSecondsSrc() {
+    var d = new Date(Date.now() - SRC_TO_UTC_MS);
+    return d.getUTCDay() * 86400 + d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds();
+  }
+
+  function weekStartMs() {
+    var s = new Date(Date.now() - SRC_TO_UTC_MS);
+    return Date.UTC(s.getUTCFullYear(), s.getUTCMonth(), s.getUTCDate() - s.getUTCDay()) + SRC_TO_UTC_MS;
+  }
+
+  function currentIndex(sec) {
+    var idx = 0;
+    for (var i = 0; i < slots.length; i++) {
+      if (slots[i].sec <= sec) idx = i; else break;
+    }
+    return idx;
+  }
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  function fmtCounter(sec) {
+    return Math.floor(sec / 3600) + ":" + pad(Math.floor((sec % 3600) / 60)) + ":" + pad(sec % 60);
+  }
+
+  function tzLabel() {
+    var off = -new Date(Date.now()).getTimezoneOffset() / 60;
+    var h = Math.floor(Math.abs(off));
+    var m = Math.round((Math.abs(off) - h) * 60);
+    return "GMT" + (off < 0 ? "-" : "+") + h + (m ? ":" + pad(m) : "");
+  }
+
+  function tzName() {
+    try {
+      return (typeof Intl !== "undefined" && Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions().timeZone) || "";
+    } catch (e) {
+      return "";
+    }
+  }
+  var TZ_NAME = tzName();
+
+  ["bs-th-day", "bs-th-counter", "bs-th-detail", "bs-th-event", "bs-th-act1", "bs-th-act2"].forEach(function (id, i) {
+    document.getElementById(id).textContent = T.headers[i];
+  });
+
+  var tbody = document.getElementById("bs-body");
+  var tzInfoEl = document.getElementById("bs-tzinfo");
+  var counters = [];
+  var lastIdx = -1;
+
+  function appendCell(tr, text, cls) {
+    var td = document.createElement("td");
+    if (cls) td.className = cls;
+    td.textContent = text;
+    tr.appendChild(td);
+    return td;
+  }
+
+  function updateTzInfo() {
+    var d = new Date(Date.now());
+    var txt = pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " (" + tzLabel();
+    if (TZ_NAME) txt += " · " + TZ_NAME;
+    tzInfoEl.textContent = txt + ")";
+  }
+
+  function buildRows(idx) {
+    counters = [];
+    tbody.innerHTML = "";
+    var n = slots.length;
+    var weekStart = weekStartMs();
+    var un = idx + 1;
+    var nextTarget = slots[((un % n) + n) % n].sec + Math.floor(un / n) * WEEK_SECONDS;
+    for (var rel = -1; rel <= 7; rel++) {
+      var u = idx + rel;
+      var slot = slots[((u % n) + n) % n];
+      var uSec = slot.sec + Math.floor(u / n) * WEEK_SECONDS;
+      var loc = new Date(weekStart + uSec * 1000);
+      var tr = document.createElement("tr");
+      tr.className = rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next";
+      appendCell(tr, T.days[loc.getDay()], "bs-day");
+      var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter");
+      if (rel !== -1) counters.push({ td: td, targetSec: rel === 0 ? nextTarget : uSec });
+      appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-detail");
+      appendCell(tr, slot.event, "bs-event");
+      appendCell(tr, slot.act1, "bs-act1");
+      appendCell(tr, slot.act2, "bs-act2");
+      tbody.appendChild(tr);
+    }
+  }
+
+  function tick() {
+    var sec = nowSecondsSrc();
+    var idx = currentIndex(sec);
+    if (idx !== lastIdx) {
+      lastIdx = idx;
+      buildRows(idx);
+    }
+    for (var i = 0; i < counters.length; i++) {
+      counters[i].td.textContent = fmtCounter(counters[i].targetSec - sec);
+    }
+    updateTzInfo();
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
