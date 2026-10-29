@@ -46,7 +46,7 @@
 
   var I18N = {
     es: { title: "Calendario Battle Survival",
-          headers: ["Día", "Counter", "Detalle", "Evento", "Actividad 1", "Actividad 2"],
+          headers: ["Día", "Contador", "Detalle", "Evento", "Actividad 1", "Actividad 2"],
           days: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
           past: "Finalizada", current: "En curso", next: "Próxima" },
     en: { title: "Battle Survival Schedule",
@@ -216,9 +216,9 @@
 
   function updateTzInfo() {
     var d = new Date(Date.now());
-    var txt = pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " (" + tzLabel();
+    var txt = pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " [" + tzLabel();
     if (TZ_NAME) txt += " · " + TZ_NAME;
-    tzInfoEl.textContent = txt + ")";
+    tzInfoEl.textContent = txt + "]";
   }
 
   function buildRows(idx) {
