@@ -33,6 +33,7 @@
     + "tr.bs-past td { color: #b3b3b3; }"
     + "tr.bs-current td { background: #009922; color: #fff; font-weight: 700; }"
     + "tr.bs-current td:nth-child(n+4) { background: rgba(0,153,34,0.4); font-weight: normal; }"
+    + "tr.bs-current td.bs-counter { font-weight: normal; }"
     + ".bs-act1, .bs-act2, .bs-server { font-size: 11px; }"
     + "tr.bs-current td.bs-day::after { content: \" \u2605\"; color: #d8d8d8; margin-right: 4px; }"
     + "#bs-tzinfo { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; text-align: right; padding: 4px 10px 0 10px; }";
@@ -173,6 +174,7 @@
   }
 
   function currentIndex(sec) {
+    if (sec < slots[0].sec) return -1;
     var idx = 0;
     for (var i = 0; i < slots.length; i++) {
       if (slots[i].sec <= sec) idx = i; else break;
@@ -183,7 +185,7 @@
   function pad(n) { return (n < 10 ? "0" : "") + n; }
 
   function fmtCounter(sec) {
-    return Math.floor(sec / 3600) + ":" + pad(Math.floor((sec % 3600) / 60)) + ":" + pad(sec % 60);
+    return pad(Math.floor(sec / 3600)) + ":" + pad(Math.floor((sec % 3600) / 60)) + ":" + pad(sec % 60);
   }
 
   function tzLabel() {
@@ -209,7 +211,7 @@
   var tbody = document.getElementById("bs-body");
   var tzInfoEl = document.getElementById("bs-tzinfo");
   var counters = [];
-  var lastIdx = -1;
+  var lastIdx = -2;
 
   function appendCell(tr, text, cls) {
     var td = document.createElement("td");
@@ -231,8 +233,6 @@
     tbody.innerHTML = "";
     var n = slots.length;
     var weekStart = weekStartMs();
-    var un = idx + 1;
-    var nextTarget = slots[((un % n) + n) % n].sec + Math.floor(un / n) * WEEK_SECONDS;
     for (var rel = -1; rel <= 7; rel++) {
       var u = idx + rel;
       var slot = slots[((u % n) + n) % n];
@@ -242,7 +242,8 @@
       tr.className = (rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next") + (slot.dayEnd ? " bs-dayend" : "");
       appendCell(tr, T.days[loc.getDay()], "bs-day");
       var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter");
-      if (rel !== -1) counters.push({ td: td, targetSec: rel === 0 ? nextTarget : uSec });
+      if (rel === 0) counters.push({ td: td, startSec: uSec, elapsed: true });
+      else if (rel > 0) counters.push({ td: td, targetSec: uSec, prefix: "T - " });
       appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-detail");
       appendCell(tr, slot.event, "bs-event");
       appendCell(tr, slot.act1, "bs-act1");
@@ -260,7 +261,8 @@
       buildRows(idx);
     }
     for (var i = 0; i < counters.length; i++) {
-      counters[i].td.textContent = fmtCounter(counters[i].targetSec - sec);
+      var c = counters[i];
+      c.td.textContent = c.elapsed ? fmtCounter(sec - c.startSec) : c.prefix + fmtCounter(c.targetSec - sec);
     }
     updateTzInfo();
   }
