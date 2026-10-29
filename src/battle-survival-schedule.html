@@ -25,6 +25,7 @@
     + ".bs-schedule th { padding: 3px 10px; text-align: left; font-size: 11px; font-weight: 700; color: #fff; background: #26b; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid #eee; white-space: nowrap; }"
     + ".bs-schedule td { padding: 3px 10px; border-bottom: 1px solid #eee; vertical-align: top; }"
     + ".bs-schedule tbody tr:last-child td { border-bottom: none; }"
+    + ".bs-schedule tbody tr.bs-dayend td { border-bottom: 2px solid #888; }"
     + ".bs-day, .bs-event, .bs-counter, .bs-detail, .bs-server { white-space: nowrap; }"
     + ".bs-counter { font-variant-numeric: tabular-nums; text-align: right; }"
     + "#bs-th-counter { text-align: right; }"
@@ -153,6 +154,7 @@
     var p = c.time_init.split(":");
     return {
       sec: (c.noday - 1) * 86400 + (+p[0]) * 3600 + (+p[1]) * 60 + (+p[2]),
+      dayEnd: c.time_init === "23:00:00" || c.time_init === "22:00:00",
       event: actMap[c.codebs].event,
       act1: actMap[c.codebs].activity_1,
       act2: actMap[c.codebs].activity_2
@@ -237,7 +239,7 @@
       var uSec = slot.sec + Math.floor(u / n) * WEEK_SECONDS;
       var loc = new Date(weekStart + uSec * 1000);
       var tr = document.createElement("tr");
-      tr.className = rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next";
+      tr.className = (rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next") + (slot.dayEnd ? " bs-dayend" : "");
       appendCell(tr, T.days[loc.getDay()], "bs-day");
       var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter");
       if (rel !== -1) counters.push({ td: td, targetSec: rel === 0 ? nextTarget : uSec });
