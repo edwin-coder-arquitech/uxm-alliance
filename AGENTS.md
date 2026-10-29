@@ -1,14 +1,15 @@
 # AGENTS.md - UXM Alliance
 
-Configuracion para agentes de IA. Este archivo garantiza continuidad del proyecto entre sesiones.
+Configuración para agentes de IA. Este archivo garantiza continuidad del proyecto entre sesiones.
 
 ---
 
-## Descripcion del Proyecto
+## Descripción del Proyecto
 
 Bloques-script autónomos para insertar en Google Sites (bloque "Insertar > Embed code").
-Cada archivo en `src/` es un **bloque-script** independiente que funciona sin librerías externas,
+Cada archivo en `src/` es un **bloque-script** independiente que funciona sin librerías externas.
 sin dependencias de red (sin fetch/CORS), y sin HTML completo.
+Determinando la Zona Horaria cambia el texto según el idioma disponible: español, ingles, portugués, italiano, turco, francés, chino, japones.
 
 ---
 
@@ -60,16 +61,18 @@ Todos los bloques-script deben usar esta paleta para acciones o elementos de imp
 
 | Token     | Hex       | Uso                                    |
 |-----------|-----------|----------------------------------------|
-| `success` | `#009922` | Acciones completadas, estado en curso  |
-| `primary` | `#26b`    | Elementos principales, headers, títulos|
-| `warning` | `#e95612` | Alertas preventivas, próximos eventos  |
-| `alert`   | `#df1b1b` | Errores, eventos críticos              |
+| `success` | #009922 | Acciones completadas, estado en curso  |
+| `primary` | #26b    | Elementos principales, headers, títulos|
+| `warning` | #e95612 | Alertas preventivas, próximos eventos  |
+| `alert`   | #df1b1b | Errores, eventos críticos              |
 
 Colores neutros complementarios (no requieren token):
-- Texto base: `#888`
-- Texto secundario: `#aaa`
-- Bordes: `#eee`
-- Texto pasado/atenuado: `#b3b3b3`
+
+- Texto base: #888
+- Texto secundario: #aaa
+- Bordes: #eee
+- Texto pasado/atenuado: #b3b3b3
+- Background satisfactorio 2: #00992156
 
 ---
 
@@ -88,6 +91,7 @@ Colores neutros complementarios (no requieren token):
 Tras cada modificación exitosa, generar commits individuales por concepto (no agrupar cambios no relacionados):
 
 Formato conventional commits:
+
 - `feat [scope]: descripcion` - nueva funcionalidad
 - `fix [scope]: descripcion` - corrección de bug
 - `refactor [scope]: descripcion` - refactorización
@@ -97,7 +101,7 @@ Formato conventional commits:
 
 ---
 
-## Bloques-Script Existentes
+## Bloques-Script Google Site Existentes
 
 | Archivo | Prefijo | Descripción |
 |---|---|---|
