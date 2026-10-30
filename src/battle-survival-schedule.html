@@ -158,14 +158,19 @@
   var slots = CALENDAR.map(function (c) {
     var p = c.time_init.split(":");
     return {
+      noday: c.noday,
       sec: (c.noday - 1) * 86400 + (+p[0]) * 3600 + (+p[1]) * 60 + (+p[2]),
-      dayEnd: c.time_init === "00:00:00" || c.time_init === "22:00:00",
       event: actMap[c.codebs].event,
       act1: actMap[c.codebs].activity_1,
       act2: actMap[c.codebs].activity_2
     };
   });
   slots.sort(function (a, b) { return a.sec - b.sec; });
+  var lastSecByDay = {};
+  slots.forEach(function (s) {
+    if (lastSecByDay[s.noday] === undefined || s.sec > lastSecByDay[s.noday]) lastSecByDay[s.noday] = s.sec;
+  });
+  slots.forEach(function (s) { s.dayEnd = s.sec === lastSecByDay[s.noday]; });
 
   function nowSecondsSrc() {
     var d = new Date(Date.now() - SRC_TO_UTC_MS);
