@@ -151,6 +151,7 @@
   ];
 
   var WEEK_SECONDS = 604800;
+  var DAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   var actMap = {};
   ACTIVITIES.forEach(function (a) { actMap[a.codebs] = a; });
@@ -261,7 +262,7 @@
       appendCell(tr, slot.event, "bs-event" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
       appendCell(tr, slot.act1, "bs-act1" + (rel > 0 && slot.hl1 ? " bs-hl-track" : ""));
       appendCell(tr, slot.act2, "bs-act2" + (rel > 0 && slot.hl2 ? " bs-hl-track" : ""));
-      appendCell(tr, pad(loc.getDate()) + " " + pad(loc.getHours()) + ":" + pad(loc.getMinutes()), "bs-server");
+      appendCell(tr, DAY_ABBR[loc.getDay()] + " " + pad(loc.getHours()) + ":" + pad(loc.getMinutes()), "bs-server");
       tbody.appendChild(tr);
     }
   }
