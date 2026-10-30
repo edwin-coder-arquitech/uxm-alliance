@@ -36,6 +36,7 @@
     + "tr.bs-current td.bs-counter { font-weight: normal; }"
     + ".bs-act1, .bs-act2, .bs-server { font-size: 11px; }"
     + ".bs-schedule tbody td.bs-hl-track { background-color: #727374; color: #ebebeb; }"
+    + ".bs-schedule tbody td.bs-hl-special { background-color: #ffee00; color: #b65200; }"
     + "tr.bs-current td.bs-day::after { content: \" \u2605\";margin-right: 4px; }"
     + "#bs-tzinfo { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; padding: 10px 10px 0 10px; }";
 
@@ -174,7 +175,8 @@
       act1: actMap[c.codebs].activity_1,
       act2: actMap[c.codebs].activity_2,
       hl1: a1.indexOf("fruit") >= 0 || a1.indexOf("ticket") >= 0,
-      hl2: a2.indexOf("stamina") >= 0 || a2.indexOf("antitoxin") >= 0
+      hl2: a2.indexOf("stamina") >= 0 || a2.indexOf("antitoxin") >= 0,
+      hlSpecial: actMap[c.codebs].event.toLowerCase().indexOf("soldiers") >= 0
     };
   });
   slots.sort(function (a, b) { return a.sec - b.sec; });
@@ -262,11 +264,11 @@
       var tr = document.createElement("tr");
       tr.className = (rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next") + (slot.dayEnd ? " bs-dayend" : "");
       appendCell(tr, T.days[loc.getDay()], "bs-day");
-      var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter");
+      var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
       if (rel === 0) counters.push({ td: td, startSec: uSec, elapsed: true, prefix: "+ " });
       else if (rel > 0) counters.push({ td: td, targetSec: uSec, prefix: "T- " });
-      appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-detail");
-      appendCell(tr, slot.event, "bs-event");
+      appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-detail" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
+      appendCell(tr, slot.event, "bs-event" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
       appendCell(tr, slot.act1, "bs-act1" + (rel > 0 && slot.hl1 ? " bs-hl-track" : ""));
       appendCell(tr, slot.act2, "bs-act2" + (rel > 0 && slot.hl2 ? " bs-hl-track" : ""));
       appendCell(tr, pad(loc.getHours()) + ":" + pad(loc.getMinutes()), "bs-server");
