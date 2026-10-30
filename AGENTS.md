@@ -112,6 +112,7 @@ Formato conventional commits:
 | Archivo | Prefijo | Descripción |
 |---|---|---|
 | `src/battle-survival-schedule.html` | `bs-` | Calendario semanal Battle Survival con counter en tiempo real |
+| `src/alliance-duel-schedule.html` | `ad-` | Listados contraíbles de actividades diarias Duelo de Alianzas (7 días, hoy destacado) |
 
 ---
 
@@ -122,5 +123,9 @@ Formato conventional commits:
 | `db/calendar-battle-survival.json` | Calendario semanal (42 slots, 6 por día) |
 | `db/activity-battle-survival.json` | Actividades y objetivos de Battle Survival |
 | `db/activity-duel-alliance.json` | Actividades y fases de Duel Alliance |
+| `db/activity-daily-alliance.json` | Actividades diarias Duelo de Alianzas por día (noday) |
+| `db/activity-code.json` | Actividades codificadas (objetive, point, phase) |
+| `db/event-code.json` | Definición de eventos (es/en) |
+| `db/alliance-duel-phase.json` | Fases del Duelo de Alianzas (P01-P06) |
 
 > Los datos en `db/` son la fuente de verdad. Al actualizar un bloque-script, sincronizar los datos embebidos con estos archivos.
