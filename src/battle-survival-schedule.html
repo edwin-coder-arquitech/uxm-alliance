@@ -258,7 +258,7 @@
       tr.className = (rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next") + (slot.dayEnd ? " bs-dayend" : "");
       appendCell(tr, T.days[loc.getDay()], "bs-day");
       var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter");
-      if (rel === 0) counters.push({ td: td, startSec: uSec, elapsed: true });
+      if (rel === 0) counters.push({ td: td, startSec: uSec, elapsed: true, prefix: "+ " });
       else if (rel > 0) counters.push({ td: td, targetSec: uSec, prefix: "T- " });
       appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-detail");
       appendCell(tr, slot.event, "bs-event");
@@ -278,7 +278,7 @@
     }
     for (var i = 0; i < counters.length; i++) {
       var c = counters[i];
-      c.td.textContent = c.elapsed ? fmtCounter(sec - c.startSec) : c.prefix + fmtCounter(c.targetSec - sec);
+      c.td.textContent = c.prefix + (c.elapsed ? fmtCounter(sec - c.startSec) : fmtCounter(c.targetSec - sec));
     }
     updateTzInfo();
   }
