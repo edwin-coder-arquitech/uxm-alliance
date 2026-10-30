@@ -6,10 +6,10 @@ Configuración para agentes de IA. Este archivo garantiza continuidad del proyec
 
 ## Descripción del Proyecto
 
-Bloques-script autónomos para insertar en Google Sites (bloque "Insertar > Embed code").
-Cada archivo en `src/` es un **bloque-script** independiente que funciona sin librerías externas.
-sin dependencias de red (sin fetch/CORS), y sin HTML completo.
-Determinando la Zona Horaria cambia el texto según el idioma disponible: español, ingles, portugués, italiano, turco, francés, chino, japones.
+1. Bloques-script autónomos para insertar en Google Sites (bloque "Insertar > Embed code").
+2. Cada archivo en `src/` es un **bloque-script** independiente que funciona sin librerías externas.
+3. sin dependencias de red (sin fetch/CORS), y sin HTML completo.
+4. Determinando el lenguaje del navegador (navigator.language + ?lang=es) cambiar el texto según el idioma disponible: español, ingles, portugués, italiano, turco, francés, chino, japones. default:ingles.
 
 ---
 
