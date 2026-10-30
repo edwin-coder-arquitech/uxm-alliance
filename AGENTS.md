@@ -68,12 +68,18 @@ Todos los bloques-script deben usar esta paleta para acciones o elementos de imp
 
 Colores neutros complementarios (no requieren token):
 
-- Texto base: #888
-- Texto secundario: #aaa
-- Bordes: #eee
-- Texto pasado/atenuado: #b3b3b3
-- Background satisfactorio 2: #00992156
+```css
+/* texto base */
+.texto-base {color: #888;}
+.texto-secundario {color: #aaa;}
+.bordes-tabla-standard {border: 1px solid #eee;}
+.texto-pasado-atenuado {color: #b3b3b3;}
+.texto-success-2 {background-color: #00ff39; color: #00821d;}
+.texto-tracking-1 {background-color: #727374; color: #ebebeb;}
+.texto-tracking-2 {background-color: #008cff; color: #003882;}
+.texto-special-1 {background-color: #ffee00; color: #b65200;}
 
+```
 ---
 
 ## Flujo de Trabajo
