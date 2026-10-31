@@ -4,10 +4,9 @@
     <thead>
       <tr>
         <th id="bs-th-counter"></th>
-        <th id="bs-th-detail"></th>
+        <th id="bs-th-status"></th>
         <th id="bs-th-event"></th>
-        <th id="bs-th-act1"></th>
-        <th id="bs-th-act2"></th>
+        <th id="bs-th-activities"></th>
         <th id="bs-th-server"></th>
       </tr>
     </thead>
@@ -20,13 +19,13 @@
   "use strict";
 
   var CSS = ""
-    + ".bs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }"
-    + ".bs-schedule { width:100%; border-collapse: collapse; background: #fff; color: #888; font: 13px/1.45 Roboto, Arial, Helvetica, sans-serif; }"
+    + ".bs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; display: flex; justify-content: flex-end; }"
+    + ".bs-schedule { width:100%; min-width: 640px; max-width: 900px; border-collapse: collapse; background: #fff; color: #888; font: 13px/1.45 Roboto, Arial, Helvetica, sans-serif; }"
     + ".bs-schedule th { padding: 3px 10px; text-align: left; font-size: 11px; font-weight: 700; color: #fff; background: #26b; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid #eee; white-space: nowrap; }"
     + ".bs-schedule td { padding: 3px 10px; border-bottom: 1px solid #eee; vertical-align: top; }"
     + ".bs-schedule tbody tr:last-child td { border-bottom: none; }"
     + ".bs-schedule tbody tr.bs-dayend td { border-bottom: 2px solid #888; }"
-    + ".bs-event, .bs-counter, .bs-detail, .bs-server { white-space: nowrap; }"
+    + ".bs-event, .bs-counter, .bs-status, .bs-server { white-space: nowrap; }"
     + ".bs-counter { font-variant-numeric: tabular-nums; text-align: right; }"
     + "#bs-th-counter { text-align: right; }"
     + ".bs-event { font-weight: 700; }"
@@ -34,11 +33,12 @@
     + "tr.bs-current td { background: #009922; color: #fff; font-weight: 700; }"
     + "tr.bs-current td:nth-child(n+3) { background: #00ff39; color: #00821d; font-weight: normal; }"
     + "tr.bs-current td.bs-counter { font-weight: normal; }"
-    + ".bs-act1, .bs-act2, .bs-server { font-size: 11px; }"
+    + ".bs-activities, .bs-server { font-size: 11px; }"
+    + ".bs-activities .bs-act-line { display: block; }"
     + ".bs-schedule tbody td.bs-hl-track { background-color: #727374; color: #ebebeb; }"
     + ".bs-schedule tbody td.bs-hl-special { background-color: #ffee00; color: #b65200; }"
     + "tr.bs-current td.bs-event::after { content: \" \u2605\";margin-right: 4px; }"
-    + "#bs-tzinfo { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; padding: 10px 10px 0 10px; }"
+    + "#bs-tzinfo { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; padding: 10px 10px 0 10px; text-align: right; }"
     + ".bs-subtitle { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 1.5rem; font-weight: 700; color: #26b; padding: 0 10px 20px 0px; }";
 
   var styleEl = document.createElement("style");
@@ -54,36 +54,36 @@
 
   var I18N = {
     es: { title: "Calendario Battle Survival",
-          subtitle: "Listado Actividades Batalla Supervivencia",
-          headers: ["Contador", "Detalle", "Evento", "Actividad 1", "Actividad 2", "Servidor"],
+          subtitle: "Cronograma Batalla Supervivencia",
+          headers: ["Contador", "Estado", "Evento", "Actividades", "Servidor"],
           past: "Finalizada", current: "En curso", next: "Próxima" },
     en: { title: "Battle Survival Schedule",
-          subtitle: "Battle Survival Activities List",
-          headers: ["Counter", "Detail", "Event", "Activity 1", "Activity 2", "Server"],
+          subtitle: "Battle Survival Schedule",
+          headers: ["Counter", "Status", "Event", "Activities", "Server"],
           past: "Finished", current: "In progress", next: "Upcoming" },
     pt: { title: "Agenda Battle Survival",
-          subtitle: "Lista de Atividades Battle Survival",
-          headers: ["Contador", "Detalhe", "Evento", "Atividade 1", "Atividade 2", "Servidor"],
+          subtitle: "Cronograma Battle Survival",
+          headers: ["Contador", "Estado", "Evento", "Atividades", "Servidor"],
           past: "Finalizada", current: "Em andamento", next: "Próxima" },
     it: { title: "Calendario Battle Survival",
-          subtitle: "Elenco Attività Battle Survival",
-          headers: ["Contatore", "Dettaglio", "Evento", "Attività 1", "Attività 2", "Server"],
+          subtitle: "Cronograma Battle Survival",
+          headers: ["Contatore", "Stato", "Evento", "Attività", "Server"],
           past: "Conclusa", current: "In corso", next: "Prossima" },
     tr: { title: "Battle Survival Programı",
-          subtitle: "Battle Survival Aktivite Listesi",
-          headers: ["Sayaç", "Ayrıntı", "Etkinlik", "Aktivite 1", "Aktivite 2", "Sunucu"],
+          subtitle: "Battle Survival Programı",
+          headers: ["Sayaç", "Durum", "Etkinlik", "Aktiviteler", "Sunucu"],
           past: "Tamamlandı", current: "Devam ediyor", next: "Yaklaşan" },
     fr: { title: "Calendrier Battle Survival",
-          subtitle: "Liste des Activités Battle Survival",
-          headers: ["Compteur", "Détail", "Événement", "Activité 1", "Activité 2", "Serveur"],
+          subtitle: "Calendrier Battle Survival",
+          headers: ["Compteur", "État", "Événement", "Activités", "Serveur"],
           past: "Terminée", current: "En cours", next: "Prochaine" },
     zh: { title: "Battle Survival 日程",
-          subtitle: "Battle Survival 活动列表",
-          headers: ["倒计时", "状态", "活动", "任务 1", "任务 2", "服务器"],
+          subtitle: "Battle Survival 时间表",
+          headers: ["倒计时", "状态", "活动", "任务", "服务器"],
           past: "已结束", current: "进行中", next: "即将开始" },
     ja: { title: "Battle Survival スケジュール",
-          subtitle: "Battle Survival アクティビティ一覧",
-          headers: ["カウンター", "詳細", "イベント", "アクティビティ 1", "アクティビティ 2", "サーバー"],
+          subtitle: "Battle Survival スケジュール",
+          headers: ["カウンター", "状態", "イベント", "アクティビティ", "サーバー"],
           past: "終了", current: "進行中", next: "次回" }
   };
   var FALLBACK_LANG = "en";
@@ -231,7 +231,7 @@
 
   document.getElementById("bs-subtitle").textContent = T.subtitle;
 
-  ["bs-th-counter", "bs-th-detail", "bs-th-event", "bs-th-act1", "bs-th-act2", "bs-th-server"].forEach(function (id, i) {
+  ["bs-th-counter", "bs-th-status", "bs-th-event", "bs-th-activities", "bs-th-server"].forEach(function (id, i) {
     document.getElementById(id).textContent = T.headers[i];
   });
 
@@ -244,6 +244,21 @@
     var td = document.createElement("td");
     if (cls) td.className = cls;
     td.textContent = text;
+    tr.appendChild(td);
+    return td;
+  }
+
+  function appendActivitiesCell(tr, act1, act2, hl1, hl2, hlSpecial) {
+    var td = document.createElement("td");
+    td.className = "bs-activities" + (hlSpecial ? " bs-hl-special" : "");
+    var d1 = document.createElement("span");
+    d1.className = "bs-act-line bs-act1" + (hl1 ? " bs-hl-track" : "");
+    d1.textContent = act1;
+    var d2 = document.createElement("span");
+    d2.className = "bs-act-line bs-act2" + (hl2 ? " bs-hl-track" : "");
+    d2.textContent = act2;
+    td.appendChild(d1);
+    td.appendChild(d2);
     tr.appendChild(td);
     return td;
   }
@@ -270,10 +285,9 @@
       var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
       if (rel === 0) counters.push({ td: td, startSec: uSec, elapsed: true, prefix: "+ " });
       else if (rel > 0) counters.push({ td: td, targetSec: uSec, prefix: "T- " });
-      appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-detail" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
+      appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-status" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
       appendCell(tr, slot.event, "bs-event" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
-      appendCell(tr, slot.act1, "bs-act1" + (rel > 0 && slot.hl1 ? " bs-hl-track" : ""));
-      appendCell(tr, slot.act2, "bs-act2" + (rel > 0 && slot.hl2 ? " bs-hl-track" : ""));
+      appendActivitiesCell(tr, slot.act1, slot.act2, rel > 0 && slot.hl1, rel > 0 && slot.hl2, rel > 0 && slot.hlSpecial);
       appendCell(tr, DAY_ABBR[loc.getDay()] + " " + pad(loc.getHours()) + ":" + pad(loc.getMinutes()), "bs-server");
       tbody.appendChild(tr);
     }
