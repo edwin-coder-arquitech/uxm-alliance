@@ -19,12 +19,12 @@
   "use strict";
 
   var CSS = ""
-    + ".bs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; display: flex; justify-content: flex-end; }"
+    + ".bs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; display: flex; justify-content: flex-start; }"
     + ".bs-schedule { width:100%; min-width: 640px; max-width: 900px; border-collapse: collapse; background: #fff; color: #888; font: 13px/1.45 Roboto, Arial, Helvetica, sans-serif; }"
     + ".bs-schedule th { padding: 3px 10px; text-align: left; font-size: 11px; font-weight: 700; color: #fff; background: #26b; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid #eee; white-space: nowrap; }"
     + ".bs-schedule td { padding: 3px 10px; border-bottom: 1px solid #eee; vertical-align: top; }"
     + ".bs-schedule tbody tr:last-child td { border-bottom: none; }"
-    + ".bs-schedule tbody tr.bs-dayend td { border-bottom: 2px solid #888; }"
+    + ".bs-schedule tbody tr.bs-dayend td { border-bottom: 2px solid #ccc; }"
     + ".bs-event, .bs-counter, .bs-status, .bs-server { white-space: nowrap; }"
     + ".bs-counter { font-variant-numeric: tabular-nums; text-align: right; }"
     + "#bs-th-counter { text-align: right; }"
@@ -35,10 +35,11 @@
     + "tr.bs-current td.bs-counter { font-weight: normal; }"
     + ".bs-activities, .bs-server { font-size: 11px; }"
     + ".bs-activities .bs-act-line { display: block; }"
-    + ".bs-schedule tbody td.bs-hl-track { background-color: #727374; color: #ebebeb; }"
+    + ".bs-schedule tbody .bs-hl-track { background-color: #727374; color: #ebebeb; }"
     + ".bs-schedule tbody td.bs-hl-special { background-color: #ffee00; color: #b65200; }"
+    + ".bs-schedule tbody tr.bs-row-third td:nth-child(1), .bs-schedule tbody tr.bs-row-third td:nth-child(2) { background-color: #B11; color: #FFF; }"
     + "tr.bs-current td.bs-event::after { content: \" \u2605\";margin-right: 4px; }"
-    + "#bs-tzinfo { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; padding: 10px 10px 0 10px; text-align: right; }"
+    + "#bs-tzinfo { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 10px; color: #aaa; padding: 10px 10px 0 10px; text-align: left; }"
     + ".bs-subtitle { font-family: Roboto, Arial, Helvetica, sans-serif; font-size: 1.5rem; font-weight: 700; color: #26b; padding: 0 10px 20px 0px; }";
 
   var styleEl = document.createElement("style");
@@ -56,7 +57,7 @@
     es: { title: "Calendario Battle Survival",
           subtitle: "Cronograma Batalla Supervivencia",
           headers: ["Contador", "Estado", "Evento", "Actividades", "Servidor"],
-          past: "Finalizada", current: "En curso", next: "Próxima" },
+          past: "Finalizada", current: "En curso", next: "Próximo" },
     en: { title: "Battle Survival Schedule",
           subtitle: "Battle Survival Schedule",
           headers: ["Counter", "Status", "Event", "Activities", "Server"],
@@ -64,11 +65,11 @@
     pt: { title: "Agenda Battle Survival",
           subtitle: "Cronograma Battle Survival",
           headers: ["Contador", "Estado", "Evento", "Atividades", "Servidor"],
-          past: "Finalizada", current: "Em andamento", next: "Próxima" },
+          past: "Finalizada", current: "Em andamento", next: "Próximo" },
     it: { title: "Calendario Battle Survival",
           subtitle: "Cronograma Battle Survival",
           headers: ["Contatore", "Stato", "Evento", "Attività", "Server"],
-          past: "Conclusa", current: "In corso", next: "Prossima" },
+          past: "Conclusa", current: "In corso", next: "Prossimo" },
     tr: { title: "Battle Survival Programı",
           subtitle: "Battle Survival Programı",
           headers: ["Sayaç", "Durum", "Etkinlik", "Aktiviteler", "Sunucu"],
@@ -168,17 +169,14 @@
 
   var slots = CALENDAR.map(function (c) {
     var p = c.time_init.split(":");
-    var a1 = actMap[c.codebs].activity_1.toLowerCase();
-    var a2 = actMap[c.codebs].activity_2.toLowerCase();
     return {
       noday: c.noday,
       sec: c.noday * 86400 + (+p[0]) * 3600 + (+p[1]) * 60 + (+p[2]),
       event: actMap[c.codebs].event,
       act1: actMap[c.codebs].activity_1,
       act2: actMap[c.codebs].activity_2,
-      hl1: a1.indexOf("fruit") >= 0 || a1.indexOf("ticket") >= 0,
-      hl2: a2.indexOf("stamina") >= 0 || a2.indexOf("antitoxin") >= 0,
-      hlSpecial: actMap[c.codebs].event.toLowerCase().indexOf("soldiers") >= 0
+      hlSpecial: actMap[c.codebs].event.toLowerCase().indexOf("soldiers") >= 0,
+      hlTrack: actMap[c.codebs].event.toLowerCase().indexOf("raven") >= 0 || actMap[c.codebs].event.toLowerCase().indexOf("heroes") >= 0
     };
   });
   slots.sort(function (a, b) { return a.sec - b.sec; });
@@ -248,14 +246,14 @@
     return td;
   }
 
-  function appendActivitiesCell(tr, act1, act2, hl1, hl2, hlSpecial) {
+  function appendActivitiesCell(tr, act1, act2, hlTrack) {
     var td = document.createElement("td");
-    td.className = "bs-activities" + (hlSpecial ? " bs-hl-special" : "");
+    td.className = "bs-activities" + (hlTrack ? " bs-hl-track" : "");
     var d1 = document.createElement("span");
-    d1.className = "bs-act-line bs-act1" + (hl1 ? " bs-hl-track" : "");
+    d1.className = "bs-act-line bs-act1";
     d1.textContent = act1;
     var d2 = document.createElement("span");
-    d2.className = "bs-act-line bs-act2" + (hl2 ? " bs-hl-track" : "");
+    d2.className = "bs-act-line bs-act2";
     d2.textContent = act2;
     td.appendChild(d1);
     td.appendChild(d2);
@@ -281,13 +279,13 @@
       var uSec = slot.sec + Math.floor(u / n) * WEEK_SECONDS;
       var loc = new Date(weekStart + uSec * 1000);
       var tr = document.createElement("tr");
-      tr.className = (rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next") + (slot.dayEnd ? " bs-dayend" : "");
+      tr.className = (rel === -1 ? "bs-past" : rel === 0 ? "bs-current" : "bs-next") + (slot.dayEnd ? " bs-dayend" : "") + (rel === 1 ? " bs-row-third" : "");
       var td = appendCell(tr, rel === -1 ? "—" : "", "bs-counter" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
       if (rel === 0) counters.push({ td: td, startSec: uSec, elapsed: true, prefix: "+ " });
       else if (rel > 0) counters.push({ td: td, targetSec: uSec, prefix: "T- " });
       appendCell(tr, rel === -1 ? T.past : rel === 0 ? T.current : rel === 1 ? T.next : "", "bs-status" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
       appendCell(tr, slot.event, "bs-event" + (rel > 0 && slot.hlSpecial ? " bs-hl-special" : ""));
-      appendActivitiesCell(tr, slot.act1, slot.act2, rel > 0 && slot.hl1, rel > 0 && slot.hl2, rel > 0 && slot.hlSpecial);
+      appendActivitiesCell(tr, slot.act1, slot.act2, rel > 0 && slot.hlTrack);
       appendCell(tr, DAY_ABBR[loc.getDay()] + " " + pad(loc.getHours()) + ":" + pad(loc.getMinutes()), "bs-server");
       tbody.appendChild(tr);
     }
