@@ -48,11 +48,12 @@ uxm-alliance/
 
 1. **Bootstrap 6 por CDN obligatorio**: versión fijada `6.0.0-alpha.1` (jsDelivr) con `integrity` SRI y `crossorigin`. Sin npm ni paso de build: el sitio sigue siendo estático y funciona en GitHub Pages.
 2. `css/style.css` se carga **después** del CSS de Bootstrap para que la personalización prevalezca.
-3. **Menú lateral**: componente `Drawer` de Bootstrap 6 (`<dialog class="drawer drawer-start drawer-sheet">`). Backdrop, `Escape` y deslizamiento los gestiona el plugin.
-4. **Hamburguesa**: sin borde, la animación solo cambia la forma de las barras (nunca el color) y **no se muestra icono "X"** al abrir.
-5. **Header transparente y superpuesto** (`position: absolute`, `pointer-events: none`): no bloquea el Home.
+3. **Barra superior**: `<nav class="navbar topbar">` con fondo **transparente** y texto en el color estándar del esquema claro (`--fg-2` / `--fg-body`). Superpuesta y con `pointer-events: none` para no bloquear el Home.
+4. **Menú lateral**: componente `Drawer` de Bootstrap 6 (`<dialog class="drawer drawer-end drawer-sheet">`), anclado a la **derecha**. Backdrop, `Escape` y deslizamiento los gestiona el plugin. Un solo drawer por página (`id="navPanel"`), con los enlaces generados por `js/app.js`.
+5. **Hamburguesa**: sin borde, la animación solo cambia la forma de las barras (nunca el color) y **no se muestra icono "X"** al abrir.
 6. **Fondo gris suave** `--bg: #e9ecef`, con texto oscuro (`--text: #212529`) y sombras recalculadas.
-7. **Footer**: siempre al fondo (body flex + `min-height: 100dvh`); YouTube a la izquierda, **selector de idioma en el centro**, copyright a la derecha.
+7. **Footer**: siempre al fondo (body flex + `min-height: 100dvh`), en grid `1fr auto 1fr`: YouTube a la izquierda, copyright en el centro y **selector de idioma a la derecha**.
+8. **Selector de idioma**: `Menu` desplegable de Bootstrap (`data-bs-toggle="menu"`, `data-bs-placement="top-end"`), se abre hacia arriba. Cada idioma se muestra en su propio idioma con atributo `lang`; conserva `?lang=` al cambiar.
 
 > Detalle completo en `docs/core/project-rules.md`.
 
@@ -97,7 +98,7 @@ Colores neutros complementarios (no requieren token):
 
 ```css
 /* texto base */
-.texto-base {font-family: Roboto, Arial; font-weight: 300; text-align: center; color: rgba(33,33,33,1); font-size: 13pt; line-height: 1.6;}
+.texto-base {font-weight: 300; text-align: center; color: #213247; font-size: 13pt; line-height: 1.6;}
 .texto-secundario {color: #aaa;}
 .bordes-tabla-standard {border: 1px solid #eee;}
 .texto-pasado-atenuado {color: #b3b3b3;}
