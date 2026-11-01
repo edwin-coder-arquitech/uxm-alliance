@@ -24,29 +24,43 @@ body {
   --ease: cubic-bezier(.22, .61, .36, 1);
 }
 
-/* ---------- Barra superior transparente ---------- */
+/* ---------- Navbar superior transparente ---------- */
 .topbar {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 40;
   width: 100%;
+  padding: 10px 14px;
+  background-color: transparent !important;   /* fondo transparente */
+  backdrop-filter: none;
+  pointer-events: none;                      /* el navbar no bloquea el contenido */
+}
+.topbar .container-fluid {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  background: transparent;
-  pointer-events: none;     /* el header no bloquea el contenido */
+  padding: 0;
+  pointer-events: none;
 }
-.topbar > * { pointer-events: auto; }
+.topbar .nav-toggle,
+.topbar .topbar-brand,
+.topbar .drawer { pointer-events: auto; }
 
+/* Texto con el color estándar del esquema claro de Bootstrap */
+.topbar {
+  --navbar-color: var(--fg-2, var(--muted));
+  --navbar-brand-color: var(--fg-body, var(--text));
+  color: var(--navbar-color);
+}
 .topbar-brand {
   font-weight: 700;
   letter-spacing: .12em;
-  color: var(--text);
+  color: var(--navbar-brand-color);
   text-decoration: none;
   text-shadow: 0 1px 2px rgba(255, 255, 255, .6);
 }
+.topbar-brand:hover { color: var(--navbar-brand-color); }
 
 .nav-toggle {
   display: inline-flex;
@@ -75,7 +89,7 @@ body {
 .nav-open .nav-toggle-bars i:nth-child(2) { transform: scaleX(.82); }
 .nav-open .nav-toggle-bars i:nth-child(3) { transform: translateY(-4px) scaleX(.45); }
 
-/* ---------- Menú lateral (Bootstrap Drawer) ---------- */
+/* ---------- Menú lateral (Bootstrap Drawer, anclado a la derecha) ---------- */
 #navPanel.drawer {
   --drawer-width: min(320px, 84vw);
   --drawer-padding-y: 24px;
@@ -109,7 +123,8 @@ body {
   background: rgba(13, 110, 253, .12);
   outline: none;
 }
-.nav-list a[aria-current="page"] {
+.nav-list a[aria-current="page"],
+.nav-list a.active {
   color: var(--text);
   font-weight: 600;
   border-left: 3px solid var(--hot);
@@ -168,9 +183,9 @@ body {
 /* ---------- Footer ---------- */
 .site-footer {
   flex: 0 0 auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
   font-size: 13px;
@@ -183,6 +198,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  justify-self: start;
   color: var(--text);
   text-decoration: none;
 }
@@ -190,34 +206,62 @@ body {
 .yt-link:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 .yt-icon { display: block; }
 
-.copyright { margin: 0; text-align: right; }
+.copyright { margin: 0; text-align: center; }
 
-/* Selector de idiomas en el footer */
+/* Selector de idioma: lista desplegable alineada a la derecha */
 .langs {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
+  justify-content: flex-end;
+  justify-self: end;
   margin: 0;
 }
-.langs button {
-  padding: 3px 7px;
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
   font-size: 12px;
-  line-height: 1.4;
-  color: var(--muted);
+  line-height: 1.5;
+  color: var(--text);
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 4px;
   cursor: pointer;
 }
-.langs button:hover { color: var(--text); border-color: var(--cyan); }
-.langs button[aria-pressed="true"] {
-  color: #fff;
-  background: #26b;
-  border-color: #26b;
+.lang-toggle:hover { color: var(--text); border-color: var(--cyan); }
+.lang-toggle::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid currentColor;
+  opacity: .6;
+}
+
+.lang-menu {
+  --bs-menu-min-width: 11rem;
+  --bs-menu-max-height: 70dvh;
+  --bs-menu-overflow-y: auto;
+}
+.lang-menu .menu-item {
+  font-size: 13px;
+  text-align: left;
+  white-space: nowrap;
+}
+.lang-menu .menu-item.selected {
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(13, 110, 253, .12);
 }
 
 @media (max-width: 620px) {
-  .site-footer { flex-direction: column; align-items: center; gap: 10px; }
-  .copyright { text-align: center; }
+  .site-footer {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 10px;
+  }
+  .yt-link { justify-self: center; }
+  .langs { justify-self: end; }
 }
