@@ -1,3 +1,3 @@
 
 
-cd /mnt/d/arquitech/uxm-alliance/src
+cd /mnt/d/arquitech/uxm-alliance
