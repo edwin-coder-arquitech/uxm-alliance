@@ -1,0 +1,82 @@
+<div class="ha-message" id="ha-message">
+  <h4>
+    Under the most crushing flames,
+    our terrible night grows dark,
+    monsters roam around me,
+    I will embrace my fear, I will do what is right...
+
+    I choose this kingdom, I choose this fight
+    in the service of the light of my Alliance!
+
+    For the silenced, for those who spent a week of blows, for the hopeless, for those who do not want to repeat this day,
+    they will hear my war drum approaching.
+
+    Brothers, do not falter, you are the strength!
+    You are the blood of fury that moves my soldiers,
+    my friend, my ally, for the Gatitos and Puppy!!!
+  </h4>
+</div>
+<div class="ha-author" id="ha-author">VıиceитÐGяey</div>
+<script>
+(function () {
+  "use strict";
+
+  var CSS = ""
+    + ".ha-message { font-family: Roboto, Arial; font-weight: 300; text-align: center; color: rgba(33,33,33,1); font-size: 13pt; line-height: 1.6; }"
+    + ".ha-message h4 { margin: 0; font-family: inherit; font-weight: inherit; text-align: inherit; color: inherit; font-size: inherit; line-height: inherit; white-space: pre-line; }"
+    + ".ha-author { font-family: Roboto, Arial; font-weight: 300; text-align: center; color: rgba(33,33,33,1); font-size: 13pt; line-height: 1.6; }";
+
+  var styleEl = document.createElement("style");
+  styleEl.type = "text/css";
+  if (styleEl.styleSheet) {
+    styleEl.styleSheet.cssText = CSS;
+  } else {
+    styleEl.appendChild(document.createTextNode(CSS));
+  }
+  (document.head || document.getElementsByTagName("head")[0]).appendChild(styleEl);
+
+  var I18N = {
+    es: {
+      message: "Bajo las llamas mas aplastantes,\noscurecen nuestra noche temible,\nmonstruos al mi alrededor merodean,\nabrazare mi miedo, hare lo correcto...\n\nElijo este reino, elijo esta lucha\nal servicio de la luz de mi Alianza!\n\npor los silenciados, por quienes pasaron una semana de golpes, por los sin esperanza, por los que no quieren repetir este dia,\nescucharan mi golpe de tambor acercándose.\n\nHermanos no decaigan ustedes son la fuerza!\nson la sangre de furia que mueve mis soldados,\nmi amigo mi aliado, por los Gatitos y Puppy!!!"
+    },
+    en: {
+      message: "Under the most crushing flames,\nour terrible night grows dark,\nmonsters roam around me,\nI will embrace my fear, I will do what is right...\n\nI choose this kingdom, I choose this fight\nin the service of the light of my Alliance!\n\nFor the silenced, for those who spent a week of blows, for the hopeless, for those who do not want to repeat this day,\nthey will hear my war drum approaching.\n\nBrothers, do not falter, you are the strength!\nYou are the blood of fury that moves my soldiers,\nmy friend, my ally, for the Gatitos and Puppy!!!"
+    },
+    pt: {
+      message: "Sob as chamas mais esmagadoras,\na nossa noite terrível escurece,\nmonstros vagam ao meu redor,\nvou abraçar meu medo, vou fazer o que é certo...\n\nEu escolho este reino, eu escolho esta luta\na serviço da luz da minha Aliança!\n\npelos silenciados, por aqueles que passaram uma semana de golpes, pelos sem esperança, por quem não quer repetir este dia,\nouvirão meu toque de tambor se aproximando.\n\nIrmãos, não desanimem, vocês são a força!\nvocês são o sangue de fúria que move meus soldados,\nmeu amigo, meu aliado, pelos Gatitos e Puppy!!!"
+    },
+    it: {
+      message: "Sotto le fiamme più schiaccianti,\nla nostra notte terribile si fa scura,\nmostri vagano intorno a me,\nabbraccerò la mia paura, farò ciò che è giusto...\n\nScelgo questo regno, scelgo questa lotta\nal servizio della luce della mia Alleanza!\n\nper i silenziati, per coloro che hanno trascorso una settimana di colpi, per gli sfiduciati, per chi non vuole ripetere questo giorno,\nudiranno il mio tamburo avvicinarsi.\n\nFratelli, non cedete, siete la forza!\nsiete il sangue di furia che muove i miei soldati,\nmio amico, mio alleato, per i Gatitos e Puppy!!!"
+    },
+    tr: {
+      message: "En ezici baskılar,\nterrible gecemiz kararır,\nçevremde canavarlar dolaşıyor,\nkorkumu kucaklayacağım, doğru olanı yapacağım...\n\nBu krallığı seçiyorum, bu mücadeleyi seçiyorum\nİttifakımın ışığı için!\n\nsusturulanlar için, bir hafta boyunca darbe alanlar için, umutsuzlar için, bu günü tekrar yaşamak istemeyenler için,\nnabızımın yaklaştığını duyacaklar.\n\nKardeşler, çaresiz olmayın, siz güçsünüz!\nsiz benim askerlerimi hareket ettiren öfke kanısınız,\ndostum, müttefikim, Gatitos ve Puppy için!!!"
+    },
+    fr: {
+      message: "Sous les flammes les plus écrasantes,\nnotre nuit terrible s'assombrit,\ndes monstres rôdent autour de moi,\nembrasserai ma peur, ferai ce qui est juste...\n\nJe choisis ce royaume, je choisis ce combat\nau service de la lumière de mon Alliance !\n\npour les silenced, pour ceux qui ont passé une semaine de coups, pour les désespoirés, pour ceux qui ne veulent pas répéter ce jour,\nils entendront ma caisse de guerre approcher.\n\nFrères, ne faiblissez pas, vous êtes la force !\nvous êtes le sang de la fureur qui anime mes soldats,\nmon ami, mon allié, pour les Gatitos et Puppy !!!"
+    },
+    zh: {
+      message: "在最猛烈的火焰中，\n我们可怕的夜晚渐渐变暗，\n怪物在我周围徘徊，\n我会拥抱恐惧，我会做正确的事……\n\n我选择这个王国，我选择这场战斗，\n为我的联盟之光而战！\n\n为了那些被沉默的人，为了那些挨打一周的人，为了那些绝望的人，为了那些不愿再重复这一天的人，\n他们将听到我的战鼓声渐渐逼近。\n\n兄弟们，不要气馁，你们就是力量！\n你们是驱动我士兵的怒火之血，\n我的朋友，我的盟友，为了 Gatitos 和 Puppy！！！"
+    },
+    ja: {
+      message: "最も押し潰すような炎の下、\n我々の恐ろしい夜は暗くなり、\n怪物が私の周囲をさ迷い、\n私は恐怖を受け入れ、正しいことをする……\n\n私はこの王国を選び、この戦いを選ぶ、\n我が同盟の光のために！\n\n沈黙された人のために、一週間も打たれ続けた人のために、希望を失った人のために、この日を繰り返したくない人のために、\n彼らは私の戦鼓が近づくのを読むだろう。\n\n兄弟たち、落胆するな、お前たちが力だ！\nお前たちは私の兵を動かす怒りの血であり、\n友よ、盟友よ、Gatitos と Puppy のために！！！"
+    }
+  };
+  var FALLBACK_LANG = "en";
+
+  function resolveLang() {
+    var m = /[?&]lang=([a-zA-Z]{2})/.exec(window.location.search);
+    if (m && I18N[m[1].toLowerCase()]) return m[1].toLowerCase();
+    var base = ((navigator.language || navigator.userLanguage || "").toLowerCase().split("-"))[0];
+    return I18N[base] ? base : FALLBACK_LANG;
+  }
+
+  var LANG = resolveLang();
+  var T = I18N[LANG];
+  var root = document.getElementById("ha-message");
+  var author = document.getElementById("ha-author");
+
+  root.setAttribute("lang", LANG);
+  root.getElementsByTagName("h4")[0].textContent = T.message;
+  author.setAttribute("lang", LANG);
+})();
+</script>
