@@ -6,10 +6,12 @@ Configuración para agentes de IA. Este archivo garantiza continuidad del proyec
 
 ## Descripción del Proyecto
 
-1. Bloques-script autónomos para insertar en Google Sites (bloque "Insertar > Embed code").
-2. Cada archivo en `src/` es un **bloque-script** independiente que funciona sin librerías externas.
-3. sin dependencias de red (sin fetch/CORS), y sin HTML completo.
+1. Pagina web pura, alojada en Github Pages.
+2. Cada archivo en `src/` es un **bloque-script** independiente que funciona sin librerías externas, útiles para prototipos.
+3. sin dependencias de red (sin fetch/CORS), en lo posible.
 4. Determinando el lenguaje del navegador (navigator.language + ?lang=es) cambiar el texto según el idioma disponible: español, ingles, portugués, italiano, turco, francés, chino, japones. default:ingles.
+5. Include Bootstrap’s CSS and JavaScript files via CDN. CDNs (Content Delivery Networks) are services that provides copies of libraries for your website.
+6. usar como base de conocimiento para implementar elementos html https://getbootstrap.com/docs/6.0/components/accordion/
 
 ---
 
@@ -17,17 +19,42 @@ Configuración para agentes de IA. Este archivo garantiza continuidad del proyec
 
 ```
 uxm-alliance/
-├── AGENTS.md          # Este archivo - configuracion para agentes
-├── README.md          # Descripcion breve del proyecto
+├── index.html         # Archivo principal sitio web
+├── actividades-diarias.html  # Subpágina: Actividades Diarias
+├── normas-uxm.html    # Subpágina: Normas UXM
+├── video-tutoriales.html    # Subpágina: Video Tutoriales
+├── estrategia.html    # Subpágina: Estrategia
+├── contacto.html      # Subpágina: Contacto
+├── css                # archivos de estilos del sitio web
+|   └── style.css
+├── js                 # archivos javascript del sitio web
+|   ├── i18n.js        # Textos por idioma
+|   └── app.js         # Lógica sitio web
+├── AGENTS.md          # Este archivo - configuración para agentes
+├── README.md          # Descripción breve del proyecto
 ├── src/               # Bloques-script (un archivo = un bloque)
-├── db/                # Datos fuente en JSON (referencia, no se cargan en runtime)
-├── bin/               # Scripts utilitarios
-├── prompt/            # Instrucciones de sesion
-└── docs/              # Documentacion del proyecto
-    ├── architecture/  # Decisiones de diseno y patrones
+├── db/                # Datos fuente en JSON (referencia base absoluta)
+├── bin/               # Scripts utilitarios windows/wsl
+├── prompt/            # Instrucciones de sesión
+└── docs/              # Documentación del proyecto
+    ├── architecture/  # Decisiones de diseño y patrones
     ├── core/          # Reglas del proyecto y alcance
     └── tracking/      # Changelog y milestones
 ```
+
+---
+
+## Sitio Web (raíz)
+
+1. **Bootstrap 6 por CDN obligatorio**: versión fijada `6.0.0-alpha.1` (jsDelivr) con `integrity` SRI y `crossorigin`. Sin npm ni paso de build: el sitio sigue siendo estático y funciona en GitHub Pages.
+2. `css/style.css` se carga **después** del CSS de Bootstrap para que la personalización prevalezca.
+3. **Menú lateral**: componente `Drawer` de Bootstrap 6 (`<dialog class="drawer drawer-start drawer-sheet">`). Backdrop, `Escape` y deslizamiento los gestiona el plugin.
+4. **Hamburguesa**: sin borde, la animación solo cambia la forma de las barras (nunca el color) y **no se muestra icono "X"** al abrir.
+5. **Header transparente y superpuesto** (`position: absolute`, `pointer-events: none`): no bloquea el Home.
+6. **Fondo gris suave** `--bg: #e9ecef`, con texto oscuro (`--text: #212529`) y sombras recalculadas.
+7. **Footer**: siempre al fondo (body flex + `min-height: 100dvh`); YouTube a la izquierda, **selector de idioma en el centro**, copyright a la derecha.
+
+> Detalle completo en `docs/core/project-rules.md`.
 
 ---
 
@@ -50,7 +77,7 @@ Cada archivo en `src/` DEBE cumplir:
 **UTC-2** es la zona horaria origen donde se registran todos los datos de actividades.
 
 - Los horarios en `db/*.json` están en UTC-2.
-- Cada bloque-script convierte los horarios a la zona local del visitante automáticamente.
+- Cada bloque-script o script del sitio web convierte los horarios a la zona local del visitante automáticamente.
 - Fórmula: `UTC = hora_origen + 2h` → luego se convierte a la zona del navegador.
 
 ---
