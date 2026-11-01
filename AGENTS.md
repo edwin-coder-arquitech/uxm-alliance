@@ -70,7 +70,7 @@ Colores neutros complementarios (no requieren token):
 
 ```css
 /* texto base */
-.texto-base {color: #6d6d6d; font-family:'Open Sans';font-size:13px;}
+.texto-base {font-family: Roboto, Arial; font-weight: 300; text-align: center; color: rgba(33,33,33,1); font-size: 13pt; line-height: 1.6;}
 .texto-secundario {color: #aaa;}
 .bordes-tabla-standard {border: 1px solid #eee;}
 .texto-pasado-atenuado {color: #b3b3b3;}
