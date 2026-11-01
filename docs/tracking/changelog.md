@@ -1,5 +1,27 @@
 # Changelog
 
+## [261101] - 2026-11-01
+
+### Added
+- Sitio web estático en la raíz del repositorio (`index.html` + 5 subpáginas) para GitHub Pages.
+- Menú lateral deslizante con las secciones: Actividades Diarias, Normas UXM, Video Tutoriales, Estrategia y Contacto.
+- Título hero "Under Xtreme Madness" con sombra y aparición progresiva de las letras desde el centro.
+- Footer persistente: enlace de YouTube con icono SVG en el extremo izquierdo y copyright en el derecho.
+- Selector de idioma en el footer con 9 idiomas (es, en, pt, it, fr, ja, ru, zh), conservando `?lang=` entre páginas.
+- Bootstrap 6 (`6.0.0-alpha.1`) por CDN con SRI en las 6 páginas del sitio.
+
+### Changed
+- Migración del menú lateral artesanal al componente **Drawer** de Bootstrap 6 (`<dialog class="drawer drawer-start drawer-sheet">`), con backdrop, `Escape` y deslizamiento gestionados por el plugin.
+- El header pasa a ser transparente y superpuesto (`position: absolute`, `pointer-events: none`): deja de bloquear el Home.
+- Fondo del sitio cambiado a gris suave `#e9ecef`, con paleta de texto oscura y sombras del hero recalculadas.
+- El botón hamburguesa pierde el borde y su animación solo cambia la forma de las barras, conservando el color.
+- Eliminado el icono "X" de cierre; el menú se cierra con backdrop, `Escape`, deslizamiento o al pulsar un enlace.
+- El selector de idiomas se traslada del menú lateral al footer (centro).
+
+### Removed
+- Estilos y marcado del backdrop y del botón de cierre manuales (`#navBackdrop`, `#navClose`, `.nav-close`).
+- Dependencia previa de Vanilla Framework en el sitio.
+
 ## [261029] - 2026-10-29
 
 ### Added
