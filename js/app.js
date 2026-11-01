@@ -93,6 +93,8 @@
   /* ---------- Menú lateral (Bootstrap Drawer) ---------- */
   var navPanel = byId("navPanel");
   var navList = byId("navList");
+  var navToggle = byId("navToggle");
+  var homeLink = byId("homeLink");
 
   function buildNav() {
     if (!navList) return;
@@ -100,13 +102,21 @@
     var here = currentFile();
     PAGES.forEach(function (page) {
       var li = document.createElement("li");
+      li.className = "nav-item";
       var a = document.createElement("a");
+      a.className = "nav-link";
       a.href = withLang(page.file, LANG);
       a.textContent = T[page.key];
-      if (page.file === here) a.setAttribute("aria-current", "page");
+      if (page.file === here) {
+        a.classList.add("active");
+        a.setAttribute("aria-current", "page");
+      }
       li.appendChild(a);
       navList.appendChild(li);
     });
+    if (navToggle) navToggle.setAttribute("aria-label", T.menu);
+    if (navPanel) navPanel.setAttribute("aria-label", T.menu);
+    if (homeLink) homeLink.href = withLang("index.html", LANG);
   }
 
   /* Estado visual del icono hamburguesa mientras el drawer está abierto */
@@ -133,23 +143,43 @@
     });
   }
 
-  /* ---------- Selector de idiomas ---------- */
+  /* ---------- Selector de idiomas (Menu desplegable de Bootstrap) ---------- */
   var langsBox = byId("langs");
   function buildLangs() {
     if (!langsBox) return;
     langsBox.innerHTML = "";
+
+    var toggle = document.createElement("button");
+    toggle.id = "langToggle";
+    toggle.type = "button";
+    toggle.className = "btn-outline lang-toggle";
+    toggle.setAttribute("data-bs-toggle", "menu");
+    toggle.setAttribute("data-bs-placement", "top-end");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-haspopup", "true");
+    toggle.setAttribute("lang", LANG);
+    toggle.textContent = window.I18N[LANG].name;
+    langsBox.appendChild(toggle);
+
+    var menu = document.createElement("div");
+    menu.className = "menu lang-menu";
+    menu.setAttribute("aria-labelledby", "langToggle");
+
     Object.keys(window.I18N).forEach(function (code) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.textContent = window.I18N[code].name;
-      b.setAttribute("lang", code);
-      b.setAttribute("aria-pressed", code === LANG ? "true" : "false");
-      b.addEventListener("click", function () {
-        var file = window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1) || "index.html";
-        window.location.href = withLang(file, code);
+      var item = document.createElement("button");
+      item.type = "button";
+      item.className = "menu-item" + (code === LANG ? " selected" : "");
+      item.setAttribute("lang", code);
+      item.setAttribute("data-lang", code);
+      item.textContent = window.I18N[code].name;
+      if (code === LANG) item.setAttribute("aria-current", "true");
+      item.addEventListener("click", function () {
+        window.location.href = withLang(currentFile(), code);
       });
-      langsBox.appendChild(b);
+      menu.appendChild(item);
     });
+
+    langsBox.appendChild(menu);
   }
 
   /* ---------- Título animado ---------- */
